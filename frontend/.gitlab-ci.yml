@@ -11,8 +11,8 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
-#  rules:
-#    - if: $CI_COMMIT_MESSAGE =~ "send notification"
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /send notification/
 #      changes:
 #        - frontend/**/*
 
