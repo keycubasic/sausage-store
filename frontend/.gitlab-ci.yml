@@ -12,7 +12,7 @@ build-frontend-code-job:
     paths:
       - frontend/dist/frontend
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /send notification/
+#    - if: $CI_COMMIT_MESSAGE =~ /send notification/
       changes:
         - frontend/**/*
 
