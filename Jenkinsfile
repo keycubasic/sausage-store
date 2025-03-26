@@ -44,8 +44,8 @@ pipeline {
             post {
                 success {
                     sh("""
-                    curl -X POST -H 'Content-type: application/json' \
-                        --data '{"chat_id": "1002558070233", "text": "Caustic собрал приложение." }' \
+                    curl -X POST -H \'Content-type: application/json\' \
+                        --data \'{"chat_id": "1002558070233", "text": "Caustic собрал приложение."}\' \
                         https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
                     """)
                 }
