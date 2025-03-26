@@ -13,14 +13,14 @@ build-frontend-code-job:
       - frontend/dist/frontend
   rules:
     - if: $CI_COMMIT_MESSAGE =~ "send notification"
-      changes:
-        - backend/**/*
+#      changes:
+#        - frontend/**/*
 
 telegram-notification-frontend:
   stage: notify
-  only:
-    changes:
-      - frontend/**/*
+#  only:
+#    changes:
+#      - frontend/**/*
   script:
     - >
       curl -X POST \
