@@ -1,6 +1,7 @@
 stages:
   - build
   - notify
+
 build-backend-code-job:
   stage: build
   script:
