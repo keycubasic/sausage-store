@@ -1,6 +1,7 @@
 stages:
   - build
   - notify
+
 build-frontend-code-job:
   stage: build
   script:
@@ -14,6 +15,7 @@ build-frontend-code-job:
     - if: $CI_COMMIT_MESSAGE =~ "send notification"
       changes:
         - backend/**/*
+
 telegram-notification-frontend:
   stage: notify
   only:
@@ -30,5 +32,4 @@ telegram-notification-frontend:
       } \
 
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
-  needs:
-    - build-frontend-code-job
+
