@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
   - notify
 
 variables:
@@ -21,8 +22,9 @@ build-backend-code-job:
         - backend/**/*
 
 semgrep-sast:
+  stage: test
   dependencies:
-    - build
+    - build-backend-code-job
   variables:
     COMPILE: ${COMPILE}
     SAST_JAVA_VERSION: ${SAST_JAVA_VERSION}
