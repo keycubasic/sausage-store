@@ -3,9 +3,6 @@ stages:
   - test
   - notify
 
-variables:
-  WATERMARK: "☺"
-
 build-backend-code-job:
   stage: build
   cache:
@@ -32,6 +29,8 @@ semgrep-sast:
 
 telegram-notification-backend:
   stage: notify
+  variables:
+    WATERMARK: "☺"
   only:
     changes:
       - backend/**/*
