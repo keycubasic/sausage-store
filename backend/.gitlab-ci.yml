@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - sonar-scan
   - notify
 
 build-backend-code-job:
@@ -27,6 +28,19 @@ semgrep-sast:
     SAST_JAVA_VERSION: ${SAST_JAVA_VERSION}
     MAVEN_REPO_PATH: ${MAVEN_REPO_PATH}
 
+sonarqube-backend-sast:
+  stage: sonar-scan
+  image: maven:3.8-openjdk-16
+  dependencies:
+    - build-backend-code-job
+  script:
+    - >
+      mvn verify sonar:sonar
+      -Dsonar.qualitygate.wait=true
+      -Dsonar.projectKey=40_Cubasic_backend
+      -Dsonar.host.url=https://sonarqube.praktikum-services.ru
+      -Dsonar.login=952b89dfce61e5d23750a3169ea677f8589f45fe
+
 telegram-notification-backend:
   stage: notify
   variables:
@@ -38,7 +52,7 @@ telegram-notification-backend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Backend built '$WATERMARK': '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-backend-code-job"}'
+      -d '{"chat_id": "-1002558070233", "text": "Backend built with Sonar '$WATERMARK': '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-backend-code-job"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
     - job: build-backend-code-job
