@@ -27,18 +27,15 @@ semgrep-sast:
     COMPILE: ${COMPILE}
     SAST_JAVA_VERSION: ${SAST_JAVA_VERSION}
     MAVEN_REPO_PATH: ${MAVEN_REPO_PATH}
-  only:
-    changes:
-      - backend/**/*
+  rules:
+    - changes:
+        - backend/**/*
 
 sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
   dependencies:
     - build-backend-code-job
-  only:
-    changes:
-      - backend/**/*
   script:
     - cd backend
     - >
@@ -47,6 +44,9 @@ sonarqube-backend-sast:
       -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN}
+  rules:
+    - changes:
+        - backend/**/*
 
 telegram-notification-backend:
   stage: notify

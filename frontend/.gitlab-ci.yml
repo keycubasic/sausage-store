@@ -18,13 +18,10 @@ build-frontend-code-job:
         - frontend/**/*
 
 sonarqube-front-sast:
-  stage: build
+  stage: test
   image: sonarsource/sonar-scanner-cli
   dependencies:
     - build-frontend-code-job
-  only:
-    changes:
-      - frontend/**/*
   script:
     - cd frontend
     - >
@@ -34,6 +31,9 @@ sonarqube-front-sast:
       -Dsonar.sources=.
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN}
+  rules:
+    - changes:
+        - frontend/**/*
 
 telegram-notification-frontend:
   stage: notify
