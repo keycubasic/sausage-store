@@ -37,9 +37,9 @@ sonarqube-backend-sast:
     - >
       mvn verify sonar:sonar
       -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=40_Cubasic_backend
-      -Dsonar.host.url=https://sonarqube.praktikum-services.ru
-      -Dsonar.login=952b89dfce61e5d23750a3169ea677f8589f45fe
+      -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${SONAR_LOGIN}
 
 telegram-notification-backend:
   stage: notify
