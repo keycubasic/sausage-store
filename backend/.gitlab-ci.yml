@@ -1,7 +1,6 @@
 stages:
   - build
   - test
-  - sonar-scan
   - notify
 
 build-backend-code-job:
@@ -29,7 +28,7 @@ semgrep-sast:
     MAVEN_REPO_PATH: ${MAVEN_REPO_PATH}
 
 sonarqube-backend-sast:
-  stage: sonar-scan
+  stage: test
   image: maven:3.8-openjdk-16
   dependencies:
     - build-backend-code-job
