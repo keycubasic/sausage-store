@@ -20,8 +20,6 @@ build-frontend-code-job:
 sonarqube-front-sast:
   stage: test
   image: sonarsource/sonar-scanner-cli
-  dependencies:
-    - build-frontend-code-job
   script:
     - cd frontend
     - >
@@ -34,6 +32,8 @@ sonarqube-front-sast:
   rules:
     - changes:
         - frontend/**/*
+  needs:
+    - job: build-frontend-code-job
 
 telegram-notification-frontend:
   stage: notify

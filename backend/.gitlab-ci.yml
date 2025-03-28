@@ -21,8 +21,6 @@ build-backend-code-job:
 
 semgrep-sast:
   stage: test
-  dependencies:
-    - build-backend-code-job
   variables:
     COMPILE: ${COMPILE}
     SAST_JAVA_VERSION: ${SAST_JAVA_VERSION}
@@ -30,12 +28,12 @@ semgrep-sast:
   rules:
     - changes:
         - backend/**/*
+  needs:
+    - job: build-backend-code-job
 
 sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
-  dependencies:
-    - build-backend-code-job
   script:
     - cd backend
     - >
@@ -48,6 +46,8 @@ sonarqube-backend-sast:
   rules:
     - changes:
         - backend/**/*
+  needs:
+    - job: build-backend-code-job
 
 telegram-notification-backend:
   stage: notify
