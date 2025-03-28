@@ -13,8 +13,27 @@ build-frontend-code-job:
     paths:
       - frontend/dist/frontend
   rules:
+#    - if: $CI_COMMIT_MESSAGE =~ /send notification/
     - changes:
         - frontend/**/*
+
+sonarqube-front-sast:
+  stage: build
+  image: sonarsource/sonar-scanner-cli
+  dependencies:
+    - build-frontend-code-job
+  only:
+    changes:
+      - frontend/**/*
+  script:
+    - cd frontend
+    - >
+      sonar-scanner
+      -Dsonar.qualitygate.wait=true
+      -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT}
+      -Dsonar.sources=.
+      -Dsonar.host.url=${SONARQUBE_URL}
+      -Dsonar.login=${SONAR_LOGIN}
 
 telegram-notification-frontend:
   stage: notify
@@ -27,7 +46,7 @@ telegram-notification-frontend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Frontend built '$WATERMARK': '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-frontend-code-job"}'
+      -d '{"chat_id": "-1002558070233", "text": "Frontend built with Sonar '$WATERMARK': '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-frontend-code-job"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
-    - job: build-frontend-code-job
+    - job: sonarqube-front-sast
