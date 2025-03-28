@@ -3,9 +3,6 @@ stages:
   - test
   - notify
 
-include:
-  - template: Security/SAST.gitlab-ci.yml
-
 variables:
   WATERMARK: "☺"
 
