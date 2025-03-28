@@ -13,7 +13,7 @@ build-backend-code-job:
       - ${MAVEN_REPO_PATH}
   script:
     - cd backend
-    - mvn package
+    - mvn package -Dmaven.repo.local=./.m2/repository
   artifacts:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
@@ -22,13 +22,12 @@ build-backend-code-job:
         - backend/**/*
 
 semgrep-sast:
-  stage: test
+  dependencies:
+    - build
   variables:
     COMPILE: ${COMPILE}
     SAST_JAVA_VERSION: ${SAST_JAVA_VERSION}
     MAVEN_REPO_PATH: ${MAVEN_REPO_PATH}
-  needs:
-    - job: build-backend-code-job
 
 telegram-notification-backend:
   stage: notify
@@ -42,4 +41,4 @@ telegram-notification-backend:
       -d '{"chat_id": "-1002558070233", "text": "Backend built '$WATERMARK': '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-backend-code-job"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
-    - job: semgrep-sast
+    - job: build-backend-code-job
