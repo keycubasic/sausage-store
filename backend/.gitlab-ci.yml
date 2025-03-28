@@ -1,9 +1,19 @@
 stages:
   - build
+  - test
   - notify
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+variables:
+  WATERMARK: "☺"
 
 build-backend-code-job:
   stage: build
+  cache:
+    paths:
+      - ${MAVEN_REPO_PATH}
   script:
     - cd backend
     - mvn package
@@ -14,6 +24,15 @@ build-backend-code-job:
     - changes:
         - backend/**/*
 
+semgrep-sast:
+  stage: test
+  variables:
+    COMPILE: ${COMPILE}
+    SAST_JAVA_VERSION: ${SAST_JAVA_VERSION}
+    MAVEN_REPO_PATH: ${MAVEN_REPO_PATH}
+  needs:
+    - job: build-backend-code-job
+
 telegram-notification-backend:
   stage: notify
   only:
@@ -23,7 +42,7 @@ telegram-notification-backend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Backend built: '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-backend-code-job"}'
+      -d '{"chat_id": "-1002558070233", "text": "Backend built '$WATERMARK': '$CI_PROJECT_URL'/-/jobs/artifacts/'$CI_COMMIT_SHA'/download?job=build-backend-code-job"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
-    - job: build-backend-code-job
+    - job: semgrep-sast
