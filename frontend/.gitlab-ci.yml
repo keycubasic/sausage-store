@@ -49,13 +49,7 @@ upload-frontend-release:
     changes:
       - frontend/**/*
   script:
-    - ls
-    - cd frontend
-    - ls
-    - cd dist
-    - ls
-    - cd frontend
-    - ls
+    - cd frontend/dist
     - tar czvf sausage-store-${VERSION}.tar.gz frontend
     - >
       curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
