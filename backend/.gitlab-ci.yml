@@ -64,9 +64,9 @@ upload-backend-release:
   script:
     - cd backend
     - >
-    mvn deploy -DskipTests
-    -Dmaven.repo.local=${MAVEN_REPO_PATH}
-    -s settings.xml -Dversion.application=${VERSION}
+      mvn deploy -DskipTests
+      -Dmaven.repo.local=${MAVEN_REPO_PATH}
+      -s settings.xml -Dversion.application=${VERSION}
   needs:
     - job: sonarqube-backend-sast
 
