@@ -7,11 +7,13 @@ stages:
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
 
+cache:
+  paths:
+    - .npm/
+    - frontend/dist/frontend
+
 build-frontend-code-job:
   stage: build
-  cache:
-    paths:
-      - .npm/
   script:
     - cd frontend
     - npm install
@@ -48,7 +50,7 @@ upload-frontend-release:
     changes:
       - frontend/**/*
   script:
-    - cd frontend/dist
+    - cd frontend/dist/frontend
     - tar czvf sausage-store-${VERSION}.tar.gz frontend
     - >
       curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
