@@ -1,0 +1,14 @@
+[Unit]
+Description=Backend Service
+Requires=frontend.service
+
+[Service]
+Environment=REPORT_PATH=/var/sausage-store/reports
+Environment=LOG_PATH=/var/sausage-store/logs
+Type=exec
+User=backend
+Group=backend
+ExecStart=java -jar /opt/sausage-store/bin/sausage-store.jar
+
+[Install]
+WantedBy=multi-user.target
