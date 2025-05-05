@@ -69,7 +69,7 @@ telegram-notification-frontend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Fronted uploaded to Nexus '$WATERMARK': '$NEXUS_REPO_URL'/#browse/browse:'$NEXUS_REPO_FRONTEND_NAME'"}'
+      -d '{"chat_id": "-1002558070233", "text": "Fronted uploaded to Nexus with Downstream '$WATERMARK': '$NEXUS_REPO_URL'/#browse/browse:'$NEXUS_REPO_FRONTEND_NAME'"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
     - job: upload-frontend-release
