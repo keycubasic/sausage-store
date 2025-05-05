@@ -7,8 +7,8 @@ variables:
 stages:
   - build
   - test
-  - notify
   - release
+  - notify
 
 build-backend-code-job:
   stage: build
