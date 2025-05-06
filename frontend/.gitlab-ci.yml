@@ -58,6 +58,26 @@ upload-frontend-release:
   needs:
     - job: sonarqube-front-sast
 
+deploy-frontend:
+  stage: deploy
+  before_script:
+    #устанавливаем ssh-agent для удобства аутентификации по ssh
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    #сохраняем сгенеренный ранее приватный ключ для раннера
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 600 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    #выполняем простую команду для проверки
+    - ssh ${DEV_USER}@${DEV_HOST} "id"
+    - scp ./frontend/frontend.service ${DEV_USER}@${DEV_HOST}:/etc/systemd/system/frontend.service
+    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_FRONTEND_NAME=${NEXUS_REPO_FRONTEND_NAME}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./frontend/deploy.sh
+  needs:
+    - job: upload-frontend-release
+
 telegram-notification-frontend:
   stage: notify
   variables:
@@ -69,7 +89,7 @@ telegram-notification-frontend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Fronted uploaded to Nexus with Downstream '$WATERMARK': '$NEXUS_REPO_URL'/#browse/browse:'$NEXUS_REPO_FRONTEND_NAME'"}'
+      -d '{"chat_id": "-1002558070233", "text": "Fronted deployed '$WATERMARK'"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
-    - job: upload-frontend-release
+    - job: deploy-frontend
