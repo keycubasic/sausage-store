@@ -59,7 +59,7 @@ public class SausageApplicationIntegrationTest {
         assertThat(products, hasItem(hasProperty("name", is("Сливочная"))));
         assertThat(products, hasItem(hasProperty("name", is("Особая"))));
         assertThat(products, hasItem(hasProperty("name", is("Молочная"))));
-        assertThat(products, hasItem(hasProperty("name", is("Нюренбергская"))));
+        assertThat(products, hasItem(hasProperty("name", is("Спайси"))));
         assertThat(products, hasItem(hasProperty("name", is("Мюнхенская"))));
         assertThat(products, hasItem(hasProperty("name", is("Еврейская"))));
     }
