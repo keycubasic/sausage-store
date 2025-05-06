@@ -61,6 +61,7 @@ upload-frontend-release:
 
 deploy-frontend:
   stage: deploy
+  when: manual
   environment:
     name: $CI_COMMIT_REF_SLUG
   before_script:
