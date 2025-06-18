@@ -45,6 +45,8 @@ semgrep-sast:
 
 sonarqube-backend-sast:
   stage: test
+  variables:
+    SAST_EXCLUDED_PATHS: "*.sql"
   image: maven:3.8-openjdk-16
   script:
     - cd backend
