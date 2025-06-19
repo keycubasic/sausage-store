@@ -103,6 +103,7 @@ deploy-backend:
 
 telegram-notification-backend:
   stage: notify
+  when: manual
   variables:
     WATERMARK: "☺"
   only:
