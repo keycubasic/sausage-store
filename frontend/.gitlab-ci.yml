@@ -84,6 +84,7 @@ deploy-frontend:
 
 telegram-notification-frontend:
   stage: notify
+  when: manual
   variables:
     WATERMARK: "☺"
   only:
