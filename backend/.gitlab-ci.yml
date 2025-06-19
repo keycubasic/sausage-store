@@ -18,6 +18,8 @@ stages:
 
 build-backend-code-job:
   stage: build
+  variables:
+    SPRING_FLYWAY_ENABLED: false
   script:
     - cd backend
     - mvn package -Dmaven.repo.local=${MAVEN_REPO_PATH} -Dversion.application=${VERSION}
@@ -43,6 +45,8 @@ semgrep-sast:
 
 sonarqube-backend-sast:
   stage: test
+  variables:
+    SPRING_FLYWAY_ENABLED: false
   image: maven:3.8-openjdk-16
   script:
     - cd backend
@@ -53,6 +57,7 @@ sonarqube-backend-sast:
       -Dsonar.projectName=${SONAR_PROJECT_NAME_BACK}
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN}
+      -Dsonar.exclusions=**/*.sql
   rules:
     - changes:
         - backend/**/*
@@ -107,7 +112,7 @@ telegram-notification-backend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Backend deployed with Postgres '$WATERMARK'"}'
+      -d '{"chat_id": "-1002558070233", "text": "Backend deployed with Flyway '$WATERMARK'"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
     - job: deploy-backend
