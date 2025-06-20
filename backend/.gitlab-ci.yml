@@ -4,6 +4,9 @@ include:
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
   JAVA_OPTS: -XX:MaxRAMPercentage=90
+  DBOPS_USERNAME: ${DBOPS_USERNAME}
+  DBOPS_PASSWORD: ${DBOPS_PASSWORD}
+  DBOPS_DATABASE: ${DBOPS_DATABASE}
 
 cache:
   paths:
