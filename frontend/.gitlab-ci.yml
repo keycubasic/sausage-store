@@ -85,6 +85,7 @@ deploy-frontend:
     - chmod 644 /tmp/${CI_PROJECT_DIR}/frontend/default.conf
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
+    - apk add gettext
     - envsubst < ./frontend/deploy_template.sh|ssh ${DEV_USER}@${DEV_HOST}
   needs:
     - job: upload-frontend-release
