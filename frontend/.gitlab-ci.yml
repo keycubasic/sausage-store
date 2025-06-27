@@ -14,15 +14,19 @@ cache:
 
 build-frontend-code-job:
   stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
   script:
-    - cd frontend
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - frontend/dist/frontend
+    - echo "test"
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/frontend"
+      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:$CI_COMMIT_SHA"
+      --build-arg VERSION=$VERSION
+      --cache=true
   rules:
-#    - if: $CI_COMMIT_MESSAGE =~ /send notification/
     - changes:
         - frontend/**/*
 
@@ -46,39 +50,41 @@ sonarqube-front-sast:
 
 upload-frontend-release:
   stage: release
+  variables:
+    GIT_STRATEGY: none
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [ "" ]
+  cache: [ ]
+  before_script:
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - crane tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA $VERSION
   only:
     changes:
       - frontend/**/*
-  script:
-    - cd frontend/dist
-    - tar czvf sausage-store-${VERSION}.tar.gz frontend
-    - >
-      curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
-      --upload-file sausage-store-${VERSION}.tar.gz
-      ${NEXUS_REPO_URL}/repository/${NEXUS_REPO_FRONTEND_NAME}/${VERSION}/sausage-store-${VERSION}.tar.gz
   needs:
     - job: sonarqube-front-sast
 
 deploy-frontend:
   stage: deploy
   when: manual
-  environment:
-    name: $CI_COMMIT_REF_SLUG
+  image: nginx:stable-alpine3.17-slim
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add openssh-client bash
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-  script:
-    #выполняем простую команду для проверки
-    - ssh ${DEV_USER}@${DEV_HOST} "id"
-    - scp ./frontend/frontend.service ${DEV_USER}@${DEV_HOST}:/etc/systemd/system/frontend.service
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_FRONTEND_NAME=${NEXUS_REPO_FRONTEND_NAME}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./frontend/deploy.sh
+    # подкинуть конфиг Nginx
+    - ssh ${DEV_USER}@${DEV_HOST} "mkdir -p /tmp/${CI_PROJECT_DIR}/frontend/"
+    - chmod 700 /tmp/${CI_PROJECT_DIR}/frontend
+    - scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/tmp/${CI_PROJECT_DIR}/frontend/default.conf
+    - chmod 644 /tmp/${CI_PROJECT_DIR}/frontend/default.conf
+    # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
+    - envsubst < ./frontend/deploy_template.sh|ssh ${DEV_USER}@${DEV_HOST}
   needs:
     - job: upload-frontend-release
 
@@ -94,7 +100,7 @@ telegram-notification-frontend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Frontend deployed '$WATERMARK'"}'
+      -d '{"chat_id": "-1002558070233", "text": "Frontend deployed with Docker '$WATERMARK'"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
     - job: deploy-frontend

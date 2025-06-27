@@ -18,16 +18,19 @@ stages:
 
 build-backend-code-job:
   stage: build
-  variables:
-    SPRING_FLYWAY_ENABLED: false
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
   script:
-    - cd backend
-    - mvn package -Dmaven.repo.local=${MAVEN_REPO_PATH} -Dversion.application=${VERSION}
-  artifacts:
-    paths:
-      - backend/target/sausage-store-${VERSION}.jar
+    - echo "test"
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/backend"
+      --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-backend:$CI_COMMIT_SHA"
+      --build-arg VERSION=$VERSION
+      --cache=true
   rules:
-#    - if: $CI_COMMIT_MESSAGE =~ /send notification/
     - changes:
         - backend/**/*
 
@@ -66,38 +69,36 @@ sonarqube-backend-sast:
 
 upload-backend-release:
   stage: release
+  variables:
+    GIT_STRATEGY: none
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [ "" ]
+  cache: [ ]
+  before_script:
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - crane tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $VERSION
   only:
     changes:
       - backend/**/*
-  script:
-    - cd backend
-    - >
-      mvn deploy -DskipTests
-      -Dmaven.repo.local=${MAVEN_REPO_PATH}
-      -s settings.xml -Dversion.application=${VERSION}
   needs:
     - job: sonarqube-backend-sast
 
 deploy-backend:
   stage: deploy
   when: manual
-  environment:
-    name: $CI_COMMIT_REF_SLUG
+  image: alpine:3.18
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add openssh-client bash
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-  script:
-    #выполняем простую команду для проверки
-    - ssh ${DEV_USER}@${DEV_HOST} "id"
-    - scp ./backend/backend.service ${DEV_USER}@${DEV_HOST}:/etc/systemd/system/backend.service
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_BACKEND_NAME=${NEXUS_REPO_BACKEND_NAME}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./backend/deploy.sh
+    # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
+    - envsubst < ./backend/deploy_template.sh|ssh ${DEV_USER}@${DEV_HOST}
   needs:
     - job: upload-backend-release
 
@@ -113,7 +114,7 @@ telegram-notification-backend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Backend deployed with MongoDB '$WATERMARK'"}'
+      -d '{"chat_id": "-1002558070233", "text": "Backend deployed with Docker '$WATERMARK'"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
     - job: deploy-backend
