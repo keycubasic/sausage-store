@@ -1,14 +1,6 @@
 #! /bin/bash
-#Если свалится одна из команд, рухнет и весь скрипт
 set -xe
-#Перезаливаем дескриптор сервиса на ВМ для деплоя
-sudo rm -f /opt/sausage-store/static/dist/sausage-store.tar.gz||true
-sudo rm -f /opt/sausage-store/static/dist/frontend/*||true
-#Качаем и заспаковываем артефакты в нужную папку
-echo
-sudo curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.tar.gz ${NEXUS_REPO_URL}/repository/${NEXUS_REPO_FRONTEND_NAME}/${VERSION}/sausage-store-${VERSION}.tar.gz
-sudo tar xfv ./sausage-store.tar.gz -C /opt/sausage-store/static/dist/||true
-#Обновляем конфиг systemd с помощью рестарта
-sudo systemctl daemon-reload
-#Перезапускаем сервис сосисочной
-sudo systemctl restart frontend
+sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+sudo docker network create -d bridge sausage_network || true
+sudo docker rm -f sausage-frontend || true
+sudo docker run --restart=always -d --name sausage-frontend -p 80:80 --network=sausage_network -v /tmp${CI_PROJECT_DIR}/frontend/default.conf:/etc/nginx/conf.d/default.conf "${CI_REGISTRY_IMAGE}"/sausage-frontend:${VERSION}
