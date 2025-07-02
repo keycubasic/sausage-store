@@ -79,8 +79,6 @@ deploy-frontend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     # подкинуть конфиг Nginx
-    - ssh ${DEV_USER}@${DEV_HOST} "mkdir -p /tmp${CI_PROJECT_DIR}/frontend/"
-    - ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /tmp${CI_PROJECT_DIR}/frontend"
     - scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/default.conf
     - ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /tmp${CI_PROJECT_DIR}/frontend/default.conf"
   script:
