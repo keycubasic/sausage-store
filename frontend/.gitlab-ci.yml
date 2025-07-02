@@ -80,9 +80,9 @@ deploy-frontend:
     - chmod 644 ~/.ssh/known_hosts
     # подкинуть конфиг Nginx
     - ssh ${DEV_USER}@${DEV_HOST} "mkdir -p /tmp${CI_PROJECT_DIR}/frontend/"
-    - sudo ssh ${DEV_USER}@${DEV_HOST} "chmod 700 /tmp${CI_PROJECT_DIR}/frontend"
+    - ssh ${DEV_USER}@${DEV_HOST} "chmod 700 /tmp${CI_PROJECT_DIR}/frontend" || true
     - scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/default.conf
-    - sudo ssh ${DEV_USER}@${DEV_HOST} "chmod 644 /tmp${CI_PROJECT_DIR}/frontend/default.conf"
+    - ssh ${DEV_USER}@${DEV_HOST} "chmod 644 /tmp${CI_PROJECT_DIR}/frontend/default.conf" || true
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
     - apk add gettext
