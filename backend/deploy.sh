@@ -1,14 +1,6 @@
 #! /bin/bash
-#Если свалится одна из команд, рухнет и весь скрипт
 set -xe
-#Перезаливаем дескриптор сервиса на ВМ для деплоя
-#sudo cp -rf backend.service /etc/systemd/system/backend.service
-sudo rm -f /opt/sausage-store/bin/sausage-store.jar||true
-#Переносим артефакт в нужную папку
-echo
-curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.jar ${NEXUS_REPO_URL}/repository/${NEXUS_REPO_BACKEND_NAME}/com/yandex/practicum/devops/sausage-store/${VERSION}/sausage-store-${VERSION}.jar
-sudo cp ./sausage-store.jar /opt/sausage-store/bin/sausage-store.jar||true #"<...>||true" говорит, если команда обвалится — продолжай
-#Обновляем конфиг systemd с помощью рестарта
-sudo systemctl daemon-reload
-#Перезапускаем сервис сосисочной
-sudo systemctl restart backend
+sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+sudo docker network create -d bridge sausage_network || true
+sudo docker rm -f sausage-backend || true
+sudo docker run --rm -d --name sausage-backend -p 8080:8080 --network=sausage_network "${CI_REGISTRY_IMAGE}"/sausage-backend:${VERSION}
