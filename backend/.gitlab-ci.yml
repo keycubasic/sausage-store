@@ -101,6 +101,10 @@ deploy-backend:
     - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/backend/docker-compose.yml
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
+    - echo "ci-cd evn-------------"
+    - echo "${CI_REGISTRY_IMAGE}"
+    - echo "${VERSION}"
+    - echo "${CI_PROJECT_DIR}"
     - apk add gettext
     - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST}
   needs:

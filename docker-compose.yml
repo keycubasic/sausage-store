@@ -3,6 +3,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile
+    command: '/bin/sh -c "echo $$VERSION"'
     environment:
       CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
       VERSION: "${VERSION}"
