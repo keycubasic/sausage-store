@@ -5,6 +5,9 @@ sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTR
 #sudo docker rm -f sausage-backend || true
 #sudo docker run --rm -d --name sausage-backend -p 8080:8080 --network=sausage_network "${CI_REGISTRY_IMAGE}"/sausage-backend:${VERSION}
 cd /tmp${CI_PROJECT_DIR}/backend
+export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
+export VERSION=${VERSION}
+export CI_PROJECT_DIR=${CI_PROJECT_DIR}
 sudo docker compose down || true
 sudo docker compose up -d
 
