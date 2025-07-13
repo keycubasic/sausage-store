@@ -68,7 +68,7 @@ upload-frontend-release:
 
 deploy-frontend:
   stage: deploy
-  when: manual
+#  when: manual
   image: nginx:stable-alpine3.17-slim
   before_script:
     - apk add openssh-client bash
@@ -80,7 +80,7 @@ deploy-frontend:
     - chmod 644 ~/.ssh/known_hosts
     # подкинуть конфиг Nginx
     - scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/default.conf
-    - ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /tmp${CI_PROJECT_DIR}/frontend/default.conf"
+    #- ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /tmp${CI_PROJECT_DIR}/frontend/default.conf"
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
     - apk add gettext
