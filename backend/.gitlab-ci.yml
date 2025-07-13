@@ -99,14 +99,8 @@ deploy-backend:
     - chmod 644 ~/.ssh/known_hosts
       # подкинуть docker-compose.yml и Dockerfiles
     - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/docker-compose.yml
-    - scp ./backend/Dockerfile ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/backend/Dockerfile
-    - scp ./frontend/Dockerfile ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/Dockerfile
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
-    - echo "ci-cd evn-------------"
-    - echo "${CI_REGISTRY_IMAGE}"
-    - echo "${VERSION}"
-    - echo "${CI_PROJECT_DIR}"
     - apk add gettext
     - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST}
   needs:

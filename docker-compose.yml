@@ -1,9 +1,5 @@
 services:
   backend:
-    build:
-      context: backend
-      dockerfile: Dockerfile
-    command: '/bin/sh -c "echo $$VERSION"'
     environment:
       CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
       VERSION: "${VERSION}"
@@ -16,9 +12,6 @@ services:
       - sausage-store-network
 
   frontend:
-    build:
-      context: frontend
-      dockerfile: Dockerfile
     environment:
       CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
       VERSION: "${VERSION}"
