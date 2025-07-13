@@ -4,7 +4,7 @@ sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTR
 #sudo docker network create -d bridge sausage_network || true
 #sudo docker rm -f sausage-backend || true
 #sudo docker run --rm -d --name sausage-backend -p 8080:8080 --network=sausage_network "${CI_REGISTRY_IMAGE}"/sausage-backend:${VERSION}
-cd /tmp${CI_PROJECT_DIR}/backend
+cd /tmp${CI_PROJECT_DIR}
 echo "deploy evn-------------"
 echo "${CI_REGISTRY_IMAGE}"
 echo "${VERSION}"
