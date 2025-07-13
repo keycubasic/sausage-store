@@ -13,5 +13,5 @@ WORKDIR /app
 COPY default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /usr/src/app/dist/frontend ./frontend
 
-RUN apt-get update && apt-get install curl
+#RUN apt-get update && apt-get install curl
 EXPOSE 80
