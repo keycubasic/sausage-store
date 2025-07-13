@@ -1,10 +1,11 @@
-version: "3.8"
-
 services:
   backend:
     build:
       context: backend
       dockerfile: Dockerfile
+    environment:
+      CI_REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}
+      VERSION: ${VERSION}
     image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
     restart: always
     container_name: sausage-store-backend
@@ -17,6 +18,10 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile
+    environment:
+      CI_REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}
+      VERSION: ${VERSION}
+      CI_PROJECT_DIR: ${CI_PROJECT_DIR}
     image: ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
     restart: always
     container_name: sausage-store-frontend
