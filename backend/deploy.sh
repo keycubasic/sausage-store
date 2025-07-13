@@ -13,8 +13,8 @@ echo "${CI_PROJECT_DIR}"
 export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
 export VERSION=${VERSION}
 export CI_PROJECT_DIR=${CI_PROJECT_DIR}
-sudo docker compose down || true
-sudo docker compose up -d
+sudo -E docker compose down || true
+sudo -E docker compose up -d
 
 
 #found_healthy() {
