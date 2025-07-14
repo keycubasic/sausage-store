@@ -54,6 +54,11 @@ export ACTIVE_COLOR="$(found_active)"
 
 echo "Starting deployment..."
 
+echo $ACTIVE_COLOR
+echo $$ACTIVE_COLOR
+echo $BLUE_COLOR
+echo $$BLUE_COLOR
+
 if [[ "$ACTIVE_COLOR" == "$BLUE_COLOR" ]]; then
   echo "Switch deployment from blue to green"
   sudo -E docker compose --profile green up -d
