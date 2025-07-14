@@ -32,9 +32,11 @@ wait_healthy() {
 }
 
 found_active() {
-  if (docker ps -f "name=sausage-backend-blue" -f "status=running" | wc -l) > 0; then
+  blue_count=$(docker ps -f "name=sausage-backend-blue" -f "status=running" | wc -l)
+  green_count=$(docker ps -f "name=sausage-backend-green" -f "status=running" | wc -l)
+  if [ "$blue_count" -gt 0 ]; then
     echo "blue"
-  elif (docker ps -f "name=sausage-backend-green" -f "status=running" | wc -l) > 0; then
+  elif [ "$green_count" -gt 0 ]; then
     echo "green"
   else
     echo "none"
@@ -44,17 +46,17 @@ found_active() {
 ACTIVE_COLOR=$(found_active)
 echo "Starting deployment..."
 
-if [ "$ACTIVE_COLOR" == "blue" ]; then
+if [[ "$ACTIVE_COLOR" == "blue" ]]; then
   echo "Switch deployment from blue to green"
   docker -E compose --profile green up -d
   wait_healthy "green"
   docker compose --profile blue down || true
-elif [ "$ACTIVE_COLOR" == "green" ]; then
+elif [[ "$ACTIVE_COLOR" == "green" ]]; then
   echo "Switch deployment from green to blue"
   docker -E compose --profile blue up -d
   wait_healthy "blue"
   docker compose --profile green down || true
-elif [ "$ACTIVE_COLOR" == "none" ]; then
+elif [[] "$ACTIVE_COLOR" == "none" ]]; then
   echo "Init deployment to blue"
   docker -E compose --profile blue up -d
   wait_healthy "blue"
