@@ -25,7 +25,7 @@ wait_healthy() {
       if [[ "$healthy_count" -gt "$line_count" ]]
           then
               echo "Container '$container_name' is healthy"
-              return 0;
+              return 1;
           else
               echo "Retrying... ($retries retries left)"
               ((retries--))
@@ -34,7 +34,7 @@ wait_healthy() {
   done
 
   echo "Container '$container_name' is unhealthy"
-  exit 0
+  return 0
 }
 
 found_active() {
