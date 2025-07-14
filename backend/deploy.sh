@@ -51,12 +51,12 @@ if [[ "$ACTIVE_COLOR" == "blue" ]]; then
   echo "Switch deployment from blue to green"
   docker -E compose --profile green up -d
   wait_healthy "green"
-  docker compose --profile blue down || true
+  docker -E compose --profile blue down || true
 elif [[ "$ACTIVE_COLOR" == "green" ]]; then
   echo "Switch deployment from green to blue"
   docker -E compose --profile blue up -d
   wait_healthy "blue"
-  docker compose --profile green down || true
+  docker -E compose --profile green down || true
 elif [[ "$ACTIVE_COLOR" == "none" ]]; then
   echo "Init deployment to blue"
   docker -E compose --profile blue up -d
