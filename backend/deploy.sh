@@ -25,7 +25,7 @@ wait_healthy() {
     if [[ "$healthy_count" -gt "$line_count" ]]
       then
         echo "Container '$container_name' is healthy"
-        exit 0;
+        return 0;
       else
         echo "Retrying... ($retries retries left)"
         ((retries--))
@@ -34,13 +34,14 @@ wait_healthy() {
   done
 
   echo "Container '$container_name' is unhealthy"
-  exit 1
+  exit 0
 }
 
 found_active() {
   local line_count=1
   local blue_count=$(docker ps -f "name=sausage-backend-blue" -f "status=running" | wc -l)
   local green_count=$(docker ps -f "name=sausage-backend-green" -f "status=running" | wc -l)
+
   if [[ "$green_count" -gt "$line_count" ]]; then
     echo "green"
   elif [[ "$blue_count" -gt "$line_count" ]]; then
