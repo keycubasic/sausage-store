@@ -17,7 +17,8 @@ wait_healthy() {
   echo "Waiting '$container_name' to become healthy..."
 
   while (( retries > 0 )); do
-    if (docker ps -f "name=$container_name" -f health=healthy | wc -l) > 0; then
+    healthy_count=$(docker ps -f "name=$container_name" -f health=healthy | wc -l)
+    if [ "$healthy_count" -gt 0]; then
       echo "Container '$container_name' is healthy"
       exit 0;
     else
