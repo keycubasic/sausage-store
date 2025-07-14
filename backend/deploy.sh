@@ -12,7 +12,7 @@ export CI_PROJECT_DIR=${CI_PROJECT_DIR}
 #sudo -E docker compose --profile blue up -d
 
 wait_healthy() {
-  local container_name="sausage-store-backend-$1"
+  local container_name="sausage-backend-$1"
   local retries=5
   echo "Waiting '$container_name' to become healthy..."
 

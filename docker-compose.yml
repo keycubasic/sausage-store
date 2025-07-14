@@ -5,13 +5,13 @@ services:
       VERSION: "${VERSION}"
     image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
     restart: always
-    container_name: sausage-store-backend-blue
+    container_name: sausage-backend-blue
     profiles:
       - blue
     ports:
       - "8080:8080"
     networks:
-      - sausage-store-network
+      - sausage-network
     healthcheck:
       test: curl --fail -s http://localhost:8080/actuator/health
       interval: 30s
@@ -25,13 +25,13 @@ services:
       VERSION: "${VERSION}"
     image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
     restart: always
-    container_name: sausage-store-backend-green
+    container_name: sausage-backend-green
     profiles:
       - green
     ports:
       - "8081:8081"
     networks:
-      - sausage-store-network
+      - sausage-network
     healthcheck:
       test: curl --fail -s http://localhost:8080/actuator/health
       interval: 30s
@@ -46,7 +46,7 @@ services:
       CI_PROJECT_DIR: "${CI_PROJECT_DIR}"
     image: ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
     restart: always
-    container_name: sausage-store-frontend
+    container_name: sausage-frontend
     profiles:
       - blue
       - green
@@ -58,8 +58,8 @@ services:
     ports:
       - "80:80"
     networks:
-      - sausage-store-network
+      - sausage-network
 
 networks:
-  sausage-store-network:
+  sausage-network:
     driver: bridge
