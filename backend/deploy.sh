@@ -12,7 +12,7 @@ export CI_PROJECT_DIR=${CI_PROJECT_DIR}
 #sudo -E docker compose --profile blue up -d
 
 wait_healthy() {
-  local container_name="sausage-backend-$1"
+  local container_name="sausage-store-backend-$1"
   local retries=5
   echo "Waiting '$container_name' to become healthy..."
 
@@ -42,17 +42,21 @@ found_active() {
 }
 
 ACTIVE_COLOR=$(found_active)
+echo "Starting deployment..."
 
 if [ "$ACTIVE_COLOR" == "blue" ]; then
-    docker -E compose --profile green up -d
-    wait_healthy "green"
-    docker compose --profile blue down || true
+  echo "Switch deployment from blue to green"
+  docker -E compose --profile green up -d
+  wait_healthy "green"
+  docker compose --profile blue down || true
 elif [ "$ACTIVE_COLOR" == "green" ]; then
-    docker -E compose --profile blue up -d
-    wait_healthy "blue"
-    docker compose --profile green down || true
+  echo "Switch deployment from green to blue"
+  docker -E compose --profile blue up -d
+  wait_healthy "blue"
+  docker compose --profile green down || true
 elif [ "$ACTIVE_COLOR" == "none" ]; then
-    docker -E compose --profile blue up -d
-    wait_healthy "blue"
+  echo "Init deployment to blue"
+  docker -E compose --profile blue up -d
+  wait_healthy "blue"
 fi
 
