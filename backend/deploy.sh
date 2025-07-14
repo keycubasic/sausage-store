@@ -35,7 +35,7 @@ wait_healthy() {
 }
 
 found_active() {
-  line_count = 1
+  line_count=1
   blue_count=$(docker ps -f "name=sausage-backend-blue" -f "status=running" | wc -l)
   green_count=$(docker ps -f "name=sausage-backend-green" -f "status=running" | wc -l)
   if [[ $blue_count -gt $line_count ]]; then
