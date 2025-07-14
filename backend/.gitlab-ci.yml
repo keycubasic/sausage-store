@@ -118,7 +118,7 @@ telegram-notification-backend:
     - >
       curl -X POST
       -H 'Content-type: application/json'
-      -d '{"chat_id": "-1002558070233", "text": "Backend deployed with Docker compose '$WATERMARK'"}'
+      -d '{"chat_id": "-1002558070233", "text": "Backend deployed with Blue-green strategy '$WATERMARK'"}'
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   needs:
     - job: deploy-backend

@@ -19,13 +19,14 @@ wait_healthy() {
 
   while (( retries > 0 )); do
     healthy_count=$(docker ps -f "name=$container_name" -f health=healthy | wc -l)
-    if [[ $healthy_count -gt $line_count ]]; then
-      echo "Container '$container_name' is healthy"
-      exit 0;
-    else
-      echo "Retrying... ($retries retries left)"
-      ((retries--))
-      sleep 5
+    if [[ $healthy_count -gt $line_count ]]
+      then
+        echo "Container '$container_name' is healthy"
+        exit 0;
+      else
+        echo "Retrying... ($retries retries left)"
+        ((retries--))
+        sleep 5
     fi
   done
 
@@ -52,19 +53,19 @@ GREEN="green"
 NONE="none"
 echo "Starting deployment..."
 
-if [[ "$ACTIVE_COLOR" == "$BLUE" ]]; then
+if [[ $ACTIVE_COLOR == $BLUE ]]; then
   echo "Switch deployment from blue to green"
-  docker -E compose --profile green up -d
-  wait_healthy "green"
-  docker -E compose --profile blue down || true
-elif [[ "$ACTIVE_COLOR" == "$GREEN" ]]; then
+  # sudo -E docker compose --profile green up -d
+  # wait_healthy "green"
+  # sudo -E docker compose --profile blue down || true
+elif [[ $ACTIVE_COLOR == $GREEN ]]; then
   echo "Switch deployment from green to blue"
-  docker -E compose --profile blue up -d
-  wait_healthy "blue"
-  docker -E compose --profile green down || true
-elif [[ "$ACTIVE_COLOR" == "$NONE" ]]; then
+  # sudo -E docker compose --profile blue up -d
+  # wait_healthy "blue"
+  # sudo -E docker compose --profile green down || true
+elif [[ $ACTIVE_COLOR == $NONE ]]; then
   echo "Init deployment to blue"
-  docker -E compose --profile blue up -d
-  wait_healthy "blue"
+  # sudo -E docker compose --profile blue up -d
+  # wait_healthy "blue"
 fi
 
