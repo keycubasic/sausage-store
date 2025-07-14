@@ -98,7 +98,7 @@ deploy-backend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
       # подкинуть docker-compose.yml и Dockerfiles
-    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/docker-compose.yml
+    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
     - apk add gettext
