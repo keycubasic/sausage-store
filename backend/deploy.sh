@@ -12,13 +12,14 @@ export CI_PROJECT_DIR=${CI_PROJECT_DIR}
 #sudo -E docker compose --profile blue up -d
 
 wait_healthy() {
-  local container_name="sausage-backend-$1"
-  local retries=5
+  container_name="sausage-backend-$1"
+  line_count = 1
+  retries=5
   echo "Waiting '$container_name' to become healthy..."
 
   while (( retries > 0 )); do
     healthy_count=$(docker ps -f "name=$container_name" -f health=healthy | wc -l)
-    if [ $healthy_count -gt 1 ]; then
+    if [[ $healthy_count -gt $line_count ]]; then
       echo "Container '$container_name' is healthy"
       exit 0;
     else
@@ -33,11 +34,12 @@ wait_healthy() {
 }
 
 found_active() {
+  line_count = 1
   blue_count=$(docker ps -f "name=sausage-backend-blue" -f "status=running" | wc -l)
   green_count=$(docker ps -f "name=sausage-backend-green" -f "status=running" | wc -l)
-  if [ $blue_count -gt 1 ]; then
+  if [[ $blue_count -gt $line_count ]]; then
     echo "blue"
-  elif [ $green_count -gt 1 ]; then
+  elif [[ $green_count -gt $line_count ]]; then
     echo "green"
   else
     echo "none"
@@ -45,19 +47,22 @@ found_active() {
 }
 
 ACTIVE_COLOR="$(found_active)"
+BLUE="blue"
+GREEN="green"
+NONE="none"
 echo "Starting deployment..."
 
-if [[ "$ACTIVE_COLOR" == "blue" ]]; then
+if [[ "$ACTIVE_COLOR" == "$BLUE" ]]; then
   echo "Switch deployment from blue to green"
   docker -E compose --profile green up -d
   wait_healthy "green"
   docker -E compose --profile blue down || true
-elif [[ "$ACTIVE_COLOR" == "green" ]]; then
+elif [[ "$ACTIVE_COLOR" == "$GREEN" ]]; then
   echo "Switch deployment from green to blue"
   docker -E compose --profile blue up -d
   wait_healthy "blue"
   docker -E compose --profile green down || true
-elif [[ "$ACTIVE_COLOR" == "none" ]]; then
+elif [[ "$ACTIVE_COLOR" == "$NONE" ]]; then
   echo "Init deployment to blue"
   docker -E compose --profile blue up -d
   wait_healthy "blue"
