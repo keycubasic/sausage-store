@@ -1,13 +1,35 @@
 services:
-  backend:
+  backend-blue:
     environment:
       CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
       VERSION: "${VERSION}"
     image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
     restart: always
-    container_name: sausage-store-backend
+    container_name: sausage-store-backend-blue
+    profiles:
+      - blue
     ports:
       - "8080:8080"
+    networks:
+      - sausage-store-network
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
+
+  backend-green:
+    environment:
+      CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
+      VERSION: "${VERSION}"
+    image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
+    restart: always
+    container_name: sausage-store-backend-green
+    profiles:
+      - green
+    ports:
+      - "8081:8081"
     networks:
       - sausage-store-network
     healthcheck:
@@ -25,6 +47,9 @@ services:
     image: ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
     restart: always
     container_name: sausage-store-frontend
+    profiles:
+      - blue
+      - green
     volumes:
       - type: bind
         source: /tmp${CI_PROJECT_DIR}/frontend/default.conf
