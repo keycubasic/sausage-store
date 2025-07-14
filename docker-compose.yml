@@ -10,6 +10,12 @@ services:
       - "8080:8080"
     networks:
       - sausage-store-network
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
 
   frontend:
     environment:

@@ -28,7 +28,8 @@ RUN keytool -importcert -file YandexInternalRootCA.crt \
 COPY --chown=jaruser:jaruser \
      --from=builder /usr/src/app/target/sausage-store-${VERSION}.jar ./sausage-store.jar
 
-#RUN apk --no-cache add curl
+RUN apk --no-cache add
+
 EXPOSE 8080
 USER jaruser
 ENTRYPOINT ["java", "-jar", "-Dmyserver.bindPort=8080", "/app/sausage-store.jar"]
