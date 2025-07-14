@@ -20,7 +20,10 @@ services:
     restart: always
     container_name: sausage-store-frontend
     volumes:
-      - /tmp${CI_PROJECT_DIR}/frontend/default.conf:/etc/nginx/conf.d/default.conf
+      - type: bind
+        source: /tmp${CI_PROJECT_DIR}/frontend/default.conf
+        target: /etc/nginx/conf.d/default.conf
+
     ports:
       - "80:80"
     networks:
