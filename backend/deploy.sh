@@ -6,11 +6,6 @@ docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 docker pull ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
 docker pull ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
 
-#export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
-#export VERSION=${VERSION}
-#export CI_PROJECT_DIR=${CI_PROJECT_DIR}
-#sudo -E docker compose --profile blue down || true
-#sudo -E docker compose --profile blue up -d
 BLUE_COLOR="blue"
 GREEN_COLOR="green"
 NONE_COLOR="none"
@@ -26,7 +21,7 @@ wait_healthy() {
       if [[ "$healthy_count" -gt "$line_count" ]]
           then
               echo "Container '$container_name' is healthy"
-              return 1;
+              return 0;
           else
               echo "Retrying... ($retries retries left)"
               ((retries--))
