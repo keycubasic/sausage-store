@@ -69,7 +69,9 @@ upload-frontend-release:
 deploy-frontend:
   stage: deploy
 #  when: manual
-  image: nginx:stable-alpine3.17-slim
+  image: docker:latest
+  services:
+    - docker:dind
   before_script:
     - apk add openssh-client bash
     - eval $(ssh-agent -s)
