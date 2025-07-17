@@ -1,7 +1,8 @@
 #! /bin/bash
 set -xe
-sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-sudo docker network create -d bridge sausage_network || true
-sudo docker rm -f sausage-frontend || true
-sudo docker run --restart=always -d --name sausage-frontend -p 80:80 --network=sausage_network -v /tmp${CI_PROJECT_DIR}/frontend/default.conf:/etc/nginx/conf.d/default.conf "${CI_REGISTRY_IMAGE}"/sausage-frontend:${VERSION}
+docker context create remote --docker "host=ssh://${DEV_USER}@${DEV_HOST}"
+docker context use remote
+docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+docker compose up sausage-frontend
+docker context rm remote
 
