@@ -89,6 +89,8 @@ deploy-backend:
   stage: deploy
   when: manual
   image: alpine:3.18
+  services:
+    - docker:dind
   before_script:
     - apk add openssh-client bash
     - eval $(ssh-agent -s)
