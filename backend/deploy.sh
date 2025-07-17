@@ -56,13 +56,13 @@ if [[ "$ACTIVE_COLOR" == "$GREEN_COLOR" ]]; then
     scp ./frontend/conf/blue/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
     docker compose --profile blue up -d
     wait_healthy "blue"
-    docker compose down sausage-backend-green || true
+    docker compose down backend-green || true
 elif [[ "$ACTIVE_COLOR" == "$BLUE_COLOR" ]]; then
     echo "Switch deployment from blue to green"
     scp ./frontend/conf/green/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
     docker compose --profile green up -d
     wait_healthy "green"
-    docker compose down sausage-backend-blue || true
+    docker compose down backend-blue || true
 elif [[ "$ACTIVE_COLOR" == "$NONE_COLOR" ]]; then
     echo "Init deployment to blue"
     scp ./frontend/conf/blue/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
