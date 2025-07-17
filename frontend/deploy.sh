@@ -25,7 +25,7 @@ if [[ "$FRONT_ACTIVE" == "$NOT_ACTIVE" ]]; then
     echo "Init frontend deployment with blue"
     scp ./frontend/conf/blue/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
     docker compose up frontend
-elif
+fi
 
 docker context rm -f remote-frontend
 echo "Deployment frontend success!"
