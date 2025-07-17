@@ -6,14 +6,14 @@ docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 docker pull ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
 docker pull ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
 
-export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
-export VERSION=${VERSION}
-export CI_PROJECT_DIR=${CI_PROJECT_DIR}
+#export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
+#export VERSION=${VERSION}
+#export CI_PROJECT_DIR=${CI_PROJECT_DIR}
 #sudo -E docker compose --profile blue down || true
 #sudo -E docker compose --profile blue up -d
-export BLUE_COLOR="blue"
-export GREEN_COLOR="green"
-export NONE_COLOR="none"
+BLUE_COLOR="blue"
+GREEN_COLOR="green"
+NONE_COLOR="none"
 
 wait_healthy() {
   local container_name="sausage-backend-$1"
@@ -52,7 +52,7 @@ found_active() {
     fi
 }
 
-export ACTIVE_COLOR="$(found_active)"
+ACTIVE_COLOR="$(found_active)"
 
 echo "Starting deployment..."
 
