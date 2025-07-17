@@ -88,7 +88,7 @@ upload-backend-release:
 deploy-backend:
   stage: deploy
   when: manual
-  image: alpine:3.18
+  image: gitlab/dind
   services:
     - docker:dind
   before_script:
