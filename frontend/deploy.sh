@@ -4,7 +4,7 @@ docker context create remote-frontend --docker "host=ssh://${DEV_USER}@${DEV_HOS
 docker context use remote-frontend
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 
-NOT_ACTIVE = "inactive"
+NOT_ACTIVE="inactive"
 
 found_active() {
     local line_count=1
@@ -28,4 +28,5 @@ if [[ "$FRONT_ACTIVE" == "$NOT_ACTIVE" ]]; then
 elif
 
 docker context rm -f remote-frontend
+echo "Deployment frontend success!"
 

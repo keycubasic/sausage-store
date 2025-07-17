@@ -71,4 +71,4 @@ elif [[ "$ACTIVE_COLOR" == "$NONE_COLOR" ]]; then
 fi
 
 docker context rm -f remote-backend
-echo "Deployment success!"
+echo "Deployment backend success!"
