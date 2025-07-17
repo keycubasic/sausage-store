@@ -103,7 +103,7 @@ deploy-backend:
     #- scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
-    - apk add gettext
+    #- apk add gettext
     #- envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST}
     - chmod +x ./backend/deploy.sh
     - ./backend/deploy.sh
