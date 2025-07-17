@@ -103,6 +103,7 @@ deploy-backend:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
     - apk add gettext
     #- envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST}
+    - chmod +x ./backend/deploy.sh
     - ./backend/deploy.sh
   needs:
     - job: upload-backend-release
