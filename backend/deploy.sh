@@ -1,5 +1,7 @@
 #! /bin/bash
 set -xe
+docker context create remote --docker "host=ssh://${DEV_USER}@${DEV_HOST}"
+docker context use remote
 sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 sudo docker pull ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
 sudo docker pull ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
@@ -57,16 +59,21 @@ echo "Starting deployment..."
 
 if [[ "$ACTIVE_COLOR" == "$GREEN_COLOR" ]]; then
     echo "Switch deployment from green to blue"
+    scp ./frontend/conf/blue/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
     sudo -E docker compose --profile blue up -d
     wait_healthy "blue"
-    sudo -E docker compose --profile green down || true
+    sudo -E docker stop sausage-backend-green || true
+    sudo -E docker rm sausage-backend-green || true
 elif [[ "$ACTIVE_COLOR" == "$BLUE_COLOR" ]]; then
     echo "Switch deployment from blue to green"
+    scp ./frontend/conf/green/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
     sudo -E docker compose --profile green up -d
     wait_healthy "green"
-    sudo -E docker compose --profile blue down || true
+    sudo -E docker stop sausage-backend-blue || true
+    sudo -E docker rm sausage-backend-blue || true
 elif [[ "$ACTIVE_COLOR" == "$NONE_COLOR" ]]; then
     echo "Init deployment to blue"
+    scp ./frontend/conf/blue/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
     sudo -E docker compose --profile blue up -d
     wait_healthy "blue"
 fi
