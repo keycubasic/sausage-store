@@ -5,7 +5,6 @@ docker context use remote
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 docker pull ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
 docker pull ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
-cd /tmp${CI_PROJECT_DIR}
 
 export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
 export VERSION=${VERSION}
