@@ -88,7 +88,7 @@ upload-backend-release:
 deploy-backend:
   stage: deploy
   when: manual
-  image: gitlab/dind
+  image: docker:latest
   services:
     - docker:dind
   before_script:
