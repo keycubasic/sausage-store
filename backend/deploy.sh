@@ -1,7 +1,7 @@
 #! /bin/bash
 set -xe
-docker context create remote --docker "host=ssh://${DEV_USER}@${DEV_HOST}"
-docker context use remote
+docker context create remote-backend --docker "host=ssh://${DEV_USER}@${DEV_HOST}"
+docker context use remote-backend
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 #docker pull ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
 #docker pull ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
@@ -49,7 +49,7 @@ found_active() {
 
 ACTIVE_COLOR="$(found_active)"
 
-echo "Starting deployment..."
+echo "Starting deployment backend..."
 
 if [[ "$ACTIVE_COLOR" == "$GREEN_COLOR" ]]; then
     echo "Switch deployment from green to blue"
@@ -70,5 +70,5 @@ elif [[ "$ACTIVE_COLOR" == "$NONE_COLOR" ]]; then
     wait_healthy "blue"
 fi
 
-docker context rm remote
+docker context rm -f remote-backend
 echo "Deployment success!"
