@@ -52,7 +52,7 @@ services:
       - green
     volumes:
       - type: bind
-        source: /tmp${CI_PROJECT_DIR}/frontend/default.conf
+        source: /home/frontend/default.conf
         target: /etc/nginx/conf.d/default.conf
 
     ports:

@@ -82,8 +82,8 @@ deploy-frontend:
     - chmod 644 ~/.ssh/known_hosts
     # подкинуть конфиг Nginx
     - ssh ${DEV_USER}@${DEV_HOST} "mkdir -p -m 775 /tmp/builds/std-040-05/sausage-store/frontend"
-    #- scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/tmp${CI_PROJECT_DIR}/frontend/
-    #- ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /tmp${CI_PROJECT_DIR}/frontend/default.conf"
+    #- scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/home/frontend/
+    #- ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /home/frontend/default.conf"
   script:
     # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд
     #- apk add gettext
