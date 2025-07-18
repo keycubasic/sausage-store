@@ -81,7 +81,7 @@ deploy-frontend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     # подкинуть конфиг Nginx
-    - ssh ${DEV_USER}@${DEV_HOST} "mkdir -p -m 775 /tmp/builds/std-040-05/sausage-store/frontend"
+    #- ssh ${DEV_USER}@${DEV_HOST} "mkdir -p -m 775 /tmp/builds/std-040-05/sausage-store/frontend"
     #- scp ./frontend/default.conf ${DEV_USER}@${DEV_HOST}:/home/frontend/
     #- ssh ${DEV_USER}@${DEV_HOST} "chmod 777 /home/frontend/default.conf"
   script:
