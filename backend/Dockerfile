@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 COPY ./src ./src
 COPY *.xml ./
 RUN wget -O  YandexInternalRootCA.crt https://storage.yandexcloud.net/cloud-certs/CA.pem \
-    && mvn package -Dversion.application=${VERSION} -Dmaven.test.skip=true
+    && mvn package -s ./settings.xml -Dversion.application=${VERSION} -Dmaven.test.skip=true
 
 # шаг релиза
 FROM bellsoft/liberica-openjre-alpine-musl:17
