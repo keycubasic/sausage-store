@@ -84,8 +84,8 @@ upload-backend-release:
 #  only:
 #    changes:
 #      - backend/**/*
-  needs:
-    - job: sonarqube-backend-sast
+#  needs:
+#    - job: sonarqube-backend-sast
 
 deploy-backend:
   stage: deploy

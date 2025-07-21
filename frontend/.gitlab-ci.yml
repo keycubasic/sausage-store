@@ -65,8 +65,8 @@ upload-frontend-release:
 #  only:
 #    changes:
 #      - frontend/**/*
-  needs:
-    - job: sonarqube-front-sast
+#  needs:
+#    - job: sonarqube-front-sast
 
 deploy-frontend:
   stage: deploy
