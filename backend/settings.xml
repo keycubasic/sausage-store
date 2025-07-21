@@ -7,4 +7,18 @@
             <password>${env.NEXUS_REPO_PASS}</password>
         </server>
     </servers>
+    <mirrors>
+        <mirror>
+            <id>google</id>
+            <name>Maven Mirror Google</name>
+            <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>yandex</id>
+            <name>Maven Mirror Yandex</name>
+            <url>https://nexus.praktikum-services.tech/repository/maven-central-proxy/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
 </settings>
