@@ -29,8 +29,7 @@ build-backend-code-job:
       --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:$CI_COMMIT_SHA"
       --build-arg VERSION=$VERSION
-      --build-arg -s ./settings.xml
-      --build-arg ./settings.xml
+      --build-arg "-s ./settings.xml"
       --cache=true
 #  rules:
 #    - changes:
