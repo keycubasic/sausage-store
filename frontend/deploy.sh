@@ -1,6 +1,32 @@
 #! /bin/bash
 set -xe
-sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-sudo docker network create -d bridge sausage_network || true
-sudo docker rm -f sausage-frontend || true
-sudo docker run --restart=always -d --name sausage-frontend -p 80:80 --network=sausage_network -v /tmp${CI_PROJECT_DIR}/frontend/default.conf:/etc/nginx/conf.d/default.conf "${CI_REGISTRY_IMAGE}"/sausage-frontend:${VERSION}
+docker context create remote-frontend --docker "host=ssh://${DEV_USER}@${DEV_HOST}"
+docker context use remote-frontend
+docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+
+NOT_ACTIVE="inactive"
+
+found_active() {
+    local line_count=1
+    local front_count=$(docker ps -f "name=sausage-frontend" -f "status=running" | wc -l)
+
+    if [[ "$front_count" -gt "$line_count" ]]; then
+        echo "active"
+    else
+        echo "inactive"
+    fi
+}
+
+FRONT_ACTIVE="$(found_active)"
+
+echo "Starting deployment frontend..."
+
+if [[ "$FRONT_ACTIVE" == "$NOT_ACTIVE" ]]; then
+    echo "Init frontend deployment with blue"
+    scp ./frontend/conf/blue/default.conf ${DEV_USER}@${DEV_HOST}:/home/frontend/
+    docker compose up frontend -d
+fi
+
+docker context rm -f remote-frontend
+echo "Deployment frontend success!"
+

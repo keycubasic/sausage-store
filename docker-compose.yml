@@ -1,0 +1,65 @@
+services:
+  backend-blue:
+    environment:
+      CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
+      VERSION: "${VERSION}"
+    image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
+    restart: always
+    container_name: sausage-backend-blue
+    profiles:
+      - blue
+    ports:
+      - "8080:8080"
+    networks:
+      - sausage-network
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
+
+  backend-green:
+    environment:
+      CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
+      VERSION: "${VERSION}"
+    image: ${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}
+    restart: always
+    container_name: sausage-backend-green
+    profiles:
+      - green
+    ports:
+      - "8081:8080"
+    networks:
+      - sausage-network
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
+
+  frontend:
+    environment:
+      CI_REGISTRY_IMAGE: "${CI_REGISTRY_IMAGE}"
+      VERSION: "${VERSION}"
+      CI_PROJECT_DIR: "${CI_PROJECT_DIR}"
+    image: ${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}
+    restart: always
+    container_name: sausage-frontend
+    profiles:
+      - blue
+      - green
+    volumes:
+      - type: bind
+        source: /home/frontend/default.conf
+        target: /etc/nginx/conf.d/default.conf
+
+    ports:
+      - "80:80"
+    networks:
+      - sausage-network
+
+networks:
+  sausage-network:
+    driver: bridge
