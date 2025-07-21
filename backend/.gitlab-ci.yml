@@ -28,7 +28,7 @@ build-backend-code-job:
       --context "${CI_PROJECT_DIR}/backend"
       --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:$CI_COMMIT_SHA"
-      --build-arg VERSION=$VERSION
+      --build-arg VERSION=$VERSION -s ./settings.xml
       --cache=true
 #  rules:
 #    - changes:
@@ -54,7 +54,7 @@ sonarqube-backend-sast:
   script:
     - cd backend
     - >
-      mvn verify sonar:sonar
+      mvn verify -s ./settings.xml sonar:sonar
       -Dsonar.qualitygate.wait=true
       -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
       -Dsonar.projectName=${SONAR_PROJECT_NAME_BACK}
