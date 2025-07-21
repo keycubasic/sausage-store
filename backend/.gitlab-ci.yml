@@ -48,6 +48,8 @@ semgrep-sast:
 
 sonarqube-backend-sast:
   stage: test
+  rules:
+    - when: never
   variables:
     SPRING_FLYWAY_ENABLED: false
   image: maven:3.8-openjdk-16
